@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Rentas{% endblock %}
+{% block content %}
+    <h1>Registrar Producto</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <p style="color:{{ 'green' if category=='success' else 'red' }}">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+
+        <label>Título del producto:</label><br>
+        <input type="text" name="titulo" required maxlength="150"><br><br>
+
+        <label>Tipo:</label><br>
+        <select name="tipo" required>
+            <option value="DVD">DVD</option>
+            <option value="Blu-Ray">Blu-Ray</option>
+            <option value="Videojuego">Videojuego</option>
+        </select>
+        <br><br>
+
+        <button type="submit">Registrar Producto</button>
+    </form>
+
+    <br>
+    <a href="/">Volver al inicio</a>
+{% endblock %}

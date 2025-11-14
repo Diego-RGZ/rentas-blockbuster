@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Registrar Renta{% endblock %}
+{% block content %}
+    <h1>Registrar Nuevo Cliente</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <p style="color:{{ 'green' if category=='success' else 'red' }}">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+
+        <label>Nombre:</label><br>
+        <input type="text" name="nombre" required><br><br>
+
+        <label>Apellido:</label><br>
+        <input type="text" name="apellido" required><br><br>
+
+        <label>Teléfono:</label><br>
+        <input type="text" name="telefono" required><br><br>
+
+        <label>Correo:</label><br>
+        <input type="email" name="correo" required><br><br>
+
+        <label>Estado de Membresía:</label><br>
+        <select name="estado_membresia" required>
+            <option value="Estandar">Estandar</option>
+             <option value="Premium">Premium</option>
+        </select>
+        <br><br>
+
+
+        <h3>Dirección</h3>
+
+        <label>Calle:</label><br>
+        <input type="text" name="calle" required><br><br>
+
+        <label>Número:</label><br>
+        <input type="text" name="numero"><br><br>
+
+        <label>Colonia:</label><br>
+        <input type="text" name="colonia"><br><br>
+
+        <label>Ciudad:</label><br>
+        <input type="text" name="ciudad"><br><br>
+
+        <label>Código Postal (CP):</label><br>
+        <input type="text" name="cp" maxlength="5" required><br><br>
+
+        <button type="submit">Registrar Cliente</button>
+    </form>
+
+    <br>
+    <a href="/">Volver al inicio</a>
+{% endblock %}
+

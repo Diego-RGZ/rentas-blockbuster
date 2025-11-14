@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Rentas Registradas</h2>
+
+<table>
+    <tr>
+        <th>ID Renta</th>
+        <th>Cliente</th>
+        <th>Empleado</th>
+        <th>Producto</th>
+        <th>Fecha de Renta</th>
+        <th>Fecha de Devolución</th>
+        <th>Pago Total</th>
+        <th>Estado</th>
+    </tr>
+
+    {% for r in rentas %}
+    <tr>
+        <td>{{ r.id_renta }}</td>
+        <td>{{ r.id_cliente }}</td>
+        <td>{{ r.id_empleado }}</td>
+        <td>{{ r.id_producto }}</td>
+        <td>{{ r.fecha_renta }}</td>
+        <td>{{ r.fecha_devolucion }}</td>
+        <td>${{ '%.2f'|format(r.pago_total) }}</td>
+        <td>{{ r.estado_renta }}</td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+{% endblock %}
