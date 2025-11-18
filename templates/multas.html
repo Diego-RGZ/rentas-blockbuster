@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Lista de Multas</h1>
+
+<a class="btn btn-primary" href="/registrar_multa">Registrar Multa</a>
+<br><br>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID Multa</th>
+            <th>ID Renta</th>
+            <th>Fecha</th>
+            <th>Monto</th>
+            <th>Motivo</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for m in multas %}
+        <tr>
+            <td>{{ m.id_multa }}</td>
+            <td>{{ m.id_renta }}</td>
+            <td>{{ m.fecha }}</td>
+            <td>${{ m.monto }}</td>
+            <td>{{ m.motivo }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
