@@ -24,6 +24,34 @@ def rentas():
     rentas = data.data if data.data else []
     return render_template("rentas.html", rentas=rentas)
 
+@app.route("/multas")
+def multas():
+    data = supabase.table("multa").select("*").execute()
+    multas = data.data if data.data else []
+    return render_template("multas.html", multas=multas)
+
+@app.route("/registrar_multa", methods=["GET", "POST"])
+def registrar_multa():
+    if request.method == "POST":
+        id_renta = int(request.form["id_renta"])
+        fecha = request.form["fecha"]
+        monto = float(request.form["monto"])
+        motivo = request.form["motivo"]
+        nueva_multa = {
+            "id_renta": id_renta,
+            "fecha": fecha,
+            "monto": monto,
+            "motivo": motivo
+        }
+        resp = supabase.table("multa").insert(nueva_multa).execute()
+        if resp.data:
+            flash("Multa registrada correctamente", "success")
+            return redirect(url_for("multas"))
+        else:
+            flash("Error al registrar la multa", "error")
+    rentas = supabase.table("renta").select("*").execute().data
+    return render_template("registrar_multa.html", rentas=rentas)
+    
 @app.route("/registrar_renta", methods=["GET", "POST"])
 def registrar_renta():
     if request.method == "POST":
