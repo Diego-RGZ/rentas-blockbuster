@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Registrar Multa</h1>
+
+<form method="POST">
+
+    <label>ID Renta:</label>
+    <select name="id_renta" class="form-control" required>
+        {% for r in rentas %}
+        <option value="{{ r.id_renta }}">{{ r.id_renta }} (Cliente {{ r.id_cliente }})</option>
+        {% endfor %}
+    </select>
+
+    <label>Fecha:</label>
+    <input type="date" name="fecha" class="form-control" required>
+
+    <label>Monto:</label>
+    <input type="number" step="0.01" name="monto" class="form-control" required>
+
+    <label>Motivo:</label>
+    <input type="text" name="motivo" class="form-control" required>
+
+    <br>
+    <button type="submit" class="btn btn-success">Guardar multa</button>
+
+</form>
+{% endblock %}
