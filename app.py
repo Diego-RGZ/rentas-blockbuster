@@ -3,6 +3,8 @@ from supabase import create_client
 from dotenv import load_dotenv
 import os
 from datetime import date
+from functools import wraps
+from flask import session, redirect, url_for, flash
 
 load_dotenv()
 
@@ -13,6 +15,46 @@ app.secret_key = "supersecretkey"  # solo para mostrar mensajes flash
 url = os.getenv("SUPABASE_URL")
 key = os.getenv("SUPABASE_KEY")
 supabase = create_client(url, key)
+
+def login_requerido(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "empleado_id" not in session:
+            flash("Debes iniciar sesión primero", "error")
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        correo = request.form["correo"].strip()
+        password = request.form["password"].strip()
+
+        empleado = supabase.table("empleado") \
+                           .select("*") \
+                           .eq("correo", correo) \
+                           .eq("password", password) \
+                           .execute().data
+
+        if empleado:
+            session["empleado_id"] = empleado[0]["id_empleado"]
+            session["empleado_nombre"] = empleado[0]["nombre"]
+            return redirect(url_for("index"))
+
+        flash("Credenciales incorrectas", "error")
+
+    return render_template("login.html")
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
+
+@app.route("/")
+def home():
+    return redirect(url_for("login"))
 
 @app.route("/")
 def index():
@@ -189,55 +231,4 @@ def registrar_empleado():
             flash(f"Error: {e}", "error")
 
     return render_template("registrar_empleado.html")
-
-
-from flask import session
-from functools import wraps
-
-# --------- LOGIN ---------
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        correo = request.form["correo"]
-        password = request.form["password"]
-
-        # Consulta segura
-        response = (
-            supabase.table("empleado")
-            .select("*")
-            .eq("correo", correo)
-            .eq("password", password)
-            .execute()
-        )
-
-        if response.data:
-            session["empleado"] = response.data[0]["nombre"]
-            flash("✔ Inicio de sesión exitoso", "success")
-            return redirect(url_for("index"))
-        else:
-            flash("❌ Correo o contraseña incorrecta", "error")
-
-    return render_template("login.html")
-
-
-# --------- LOGOUT ---------
-@app.route("/logout")
-def logout():
-    session.clear()
-    flash("Has cerrado sesión", "success")
-    return redirect(url_for("login"))
-
-
-# --------- PROTECCIÓN DE RUTAS ---------
-def login_requerido(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        if "empleado" not in session:
-            flash("Debes iniciar sesión", "error")
-            return redirect(url_for("login"))
-        return f(*args, **kwargs)
-    return wrapper
-
-if __name__ == "__main__":
-    app.run(debug=True)
 
