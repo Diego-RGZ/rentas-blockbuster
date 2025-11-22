@@ -185,6 +185,52 @@ def registrar_empleado():
 
     return render_template("registrar_empleado.html")
 
+from flask import session
+from functools import wraps
+
+# --------- LOGIN ---------
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        correo = request.form["correo"]
+        password = request.form["password"]
+
+        # Consulta segura
+        response = (
+            supabase.table("empleado")
+            .select("*")
+            .eq("correo", correo)
+            .eq("password", password)
+            .execute()
+        )
+
+        if response.data:
+            session["empleado"] = response.data[0]["nombre"]
+            flash("✔ Inicio de sesión exitoso", "success")
+            return redirect(url_for("index"))
+        else:
+            flash("❌ Correo o contraseña incorrecta", "error")
+
+    return render_template("login.html")
+
+
+# --------- LOGOUT ---------
+@app.route("/logout")
+def logout():
+    session.clear()
+    flash("Has cerrado sesión", "success")
+    return redirect(url_for("login"))
+
+
+# --------- PROTECCIÓN DE RUTAS ---------
+def login_requerido(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if "empleado" not in session:
+            flash("Debes iniciar sesión", "error")
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    return wrapper
 
 if __name__ == "__main__":
     app.run(debug=True)
