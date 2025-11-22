@@ -155,12 +155,15 @@ def registrar_empleado():
         try:
             nombre = request.form["nombre"]
             salario = request.form.get("salario", "0").strip()
-            # convertir salario a número (decimal)
-            salario_val = float(salario) if salario != "" else 0.0
-            tipo_empleado = request.form["tipo_empleado"]  # 'General'|'Cajero'|'Supervisor'
-            caja_asignada = request.form.get("caja_asignada", None)
-            turno = request.form.get("turno", None)
-            area = request.form.get("area", None)
+            salario_val = float(salario) if salario else 0.0
+
+            tipo_empleado = request.form["tipo_empleado"]
+            caja_asignada = request.form.get("caja_asignada")
+            turno = request.form.get("turno")
+            area = request.form.get("area")
+
+            correo = request.form["correo"]
+            password = request.form["password"]
 
             nuevo_empleado = {
                 "nombre": nombre,
@@ -168,7 +171,9 @@ def registrar_empleado():
                 "tipo_empleado": tipo_empleado,
                 "caja_asignada": caja_asignada,
                 "turno": turno,
-                "area": area
+                "area": area,
+                "correo": correo,
+                "password": password
             }
 
             resp = supabase.table("empleado").insert(nuevo_empleado).execute()
@@ -177,13 +182,14 @@ def registrar_empleado():
                 flash("Empleado registrado correctamente", "success")
                 return redirect(url_for("registrar_empleado"))
             else:
-                # si supabase devuelve error dentro de resp.error u otro formato
-                msg = getattr(resp, "error", None)
+                msg = getattr(resp, "error", "Error desconocido")
                 flash(f"Error al registrar empleado: {msg}", "error")
+
         except Exception as e:
             flash(f"Error: {e}", "error")
 
     return render_template("registrar_empleado.html")
+
 
 from flask import session
 from functools import wraps
