@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Login de empleados</h2>
+
+<form method="POST">
+    <label>Correo:</label>
+    <input type="email" name="correo" required>
+
+    <label>Contraseña:</label>
+    <input type="password" name="password" required>
+
+    <button type="submit">Ingresar</button>
+</form>
+
+{% endblock %}
