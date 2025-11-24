@@ -1,21 +1,28 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 from supabase import create_client
 from dotenv import load_dotenv
 import os
 from datetime import date
 from functools import wraps
-from flask import session, redirect, url_for, flash
 
+# -------------------------------------------------------------
+# Cargar variables de entorno
+# -------------------------------------------------------------
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = "supersecretkey"  # solo para mostrar mensajes flash
+app.secret_key = "supersecretkey"
 
+# -------------------------------------------------------------
 # Conexión a Supabase
+# -------------------------------------------------------------
 url = os.getenv("SUPABASE_URL")
 key = os.getenv("SUPABASE_KEY")
 supabase = create_client(url, key)
 
+# -------------------------------------------------------------
+# Decorador para proteger rutas
+# -------------------------------------------------------------
 def login_requerido(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -25,7 +32,9 @@ def login_requerido(f):
         return f(*args, **kwargs)
     return decorated_function
 
-
+# -------------------------------------------------------------
+# LOGIN
+# -------------------------------------------------------------
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -41,38 +50,50 @@ def login():
         if empleado:
             session["empleado_id"] = empleado[0]["id_empleado"]
             session["empleado_nombre"] = empleado[0]["nombre"]
-            return redirect(url_for("index"))
+            return redirect(url_for("home"))
 
         flash("Credenciales incorrectas", "error")
 
     return render_template("login.html")
 
+# -------------------------------------------------------------
+# LOGOUT
+# -------------------------------------------------------------
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("login"))
 
+# -------------------------------------------------------------
+# PÁGINA PRINCIPAL (Dashboard)
+# -------------------------------------------------------------
 @app.route("/")
+@login_requerido
 def home():
-    return redirect(url_for("login"))
-
-@app.route("/")
-def index():
     return render_template("index.html")
 
+# -------------------------------------------------------------
+# RENTAS
+# -------------------------------------------------------------
 @app.route("/rentas")
+@login_requerido
 def rentas():
     data = supabase.table("renta").select("*").execute()
     rentas = data.data if data.data else []
     return render_template("rentas.html", rentas=rentas)
 
+# -------------------------------------------------------------
+# MULTAS
+# -------------------------------------------------------------
 @app.route("/multas")
+@login_requerido
 def multas():
     data = supabase.table("multa").select("*").execute()
     multas = data.data if data.data else []
     return render_template("multas.html", multas=multas)
 
 @app.route("/registrar_multa", methods=["GET", "POST"])
+@login_requerido
 def registrar_multa():
     if request.method == "POST":
         id_renta = int(request.form["id_renta"])
@@ -91,10 +112,15 @@ def registrar_multa():
             return redirect(url_for("multas"))
         else:
             flash("Error al registrar la multa", "error")
+
     rentas = supabase.table("renta").select("*").execute().data
     return render_template("registrar_multa.html", rentas=rentas)
-    
+
+# -------------------------------------------------------------
+# REGISTRAR RENTA
+# -------------------------------------------------------------
 @app.route("/registrar_renta", methods=["GET", "POST"])
+@login_requerido
 def registrar_renta():
     if request.method == "POST":
 
@@ -134,7 +160,11 @@ def registrar_renta():
                            productos=productos,
                            hoy=str(date.today()))
 
+# -------------------------------------------------------------
+# REGISTRAR CLIENTE
+# -------------------------------------------------------------
 @app.route("/registrar_cliente", methods=["GET", "POST"])
+@login_requerido
 def registrar_cliente():
     if request.method == "POST":
         nombre = request.form["nombre"]
@@ -170,11 +200,16 @@ def registrar_cliente():
             flash("Error al registrar el cliente", "error")
 
     return render_template("registrar_cliente.html")
+
+# -------------------------------------------------------------
+# REGISTRAR PRODUCTO
+# -------------------------------------------------------------
 @app.route("/registrar_producto", methods=["GET", "POST"])
+@login_requerido
 def registrar_producto():
     if request.method == "POST":
         titulo = request.form["titulo"]
-        tipo = request.form["tipo"]  # DVD, Blu-Ray, Videojuego
+        tipo = request.form["tipo"]
 
         nuevo_producto = {
             "titulo": titulo,
@@ -191,7 +226,11 @@ def registrar_producto():
 
     return render_template("registrar_producto.html")
 
+# -------------------------------------------------------------
+# REGISTRAR EMPLEADO
+# -------------------------------------------------------------
 @app.route("/registrar_empleado", methods=["GET", "POST"])
+@login_requerido
 def registrar_empleado():
     if request.method == "POST":
         try:
@@ -231,4 +270,3 @@ def registrar_empleado():
             flash(f"Error: {e}", "error")
 
     return render_template("registrar_empleado.html")
-

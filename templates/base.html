@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <title>Sistema de Rentas - Blockbuster</title>
 
-    <!-- Cargar el CSS que tú usabas originalmente -->
+    <!-- Cargar tu CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
 </head>
 
 <body>
 
+{% if session.get("empleado_id") %}
 <header>
     <h1>Sistema de Rentas - Blockbuster</h1>
 
@@ -17,16 +18,18 @@
         <a href="/">Inicio</a>
         <a href="/rentas">Rentas</a>
         <a href="/registrar_renta">Registrar Renta</a>
-        <a href="/multas">Multas
+        <a href="/multas">Multas</a>
         <a href="/registrar_cliente">Registrar Cliente</a>
         <a href="/registrar_producto">Registrar Producto</a>
         <a href="/registrar_empleado">Registrar Empleado</a>
-        <a href="/login">Login</a>
-        <a href="/logout">Logout</a>
 
+        <!-- Logout solo si hay sesión -->
+        <a href="/logout">Logout</a>
     </nav>
 </header>
+{% endif %}
 
+<!-- Contenido principal -->
 <main style="margin: 2em;">
     {% block content %}
     {% endblock %}
@@ -34,4 +37,3 @@
 
 </body>
 </html>
-
