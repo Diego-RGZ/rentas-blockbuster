@@ -1,16 +1,57 @@
 {% extends "base.html" %}
+
 {% block content %}
+<style>
+    .login-container {
+        width: 380px;
+        background: white;
+        padding: 30px;
+        margin: 80px auto;
+        border-radius: 15px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.25);
+        text-align: center;
+    }
+    .login-container input {
+        width: 100%;
+        padding: 12px;
+        margin-top: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+    }
+    .login-btn {
+        width: 100%;
+        margin-top: 20px;
+        padding: 12px;
+        background: #0066cc;
+        color: white;
+        font-size: 18px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+    .login-btn:hover {
+        background: #004c99;
+    }
+</style>
 
-<h2>Login de empleados</h2>
+<div class="login-container">
+    <h2>Login</h2>
 
-<form method="POST">
-    <label>Correo:</label>
-    <input type="email" name="correo" required>
+    <form method="POST">
+        <label>Correo:</label>
+        <input type="email" name="correo" placeholder="Ingresa correo" required>
 
-    <label>Contraseña:</label>
-    <input type="password" name="password" required>
+        <label>Contraseña:</label>
+        <input type="password" name="password" placeholder="Ingresa contraseña" required>
 
-    <button type="submit">Ingresar</button>
-</form>
+        <button class="login-btn">Iniciar sesión</button>
+    </form>
+
+    {% if error %}
+        <p style="color:red; margin-top: 15px;">{{ error }}</p>
+    {% endif %}
+</div>
 
 {% endblock %}
+
