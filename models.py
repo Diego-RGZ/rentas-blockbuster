@@ -34,6 +34,6 @@ class Renta(db.Model):
     id_empleado = db.Column(db.Integer, db.ForeignKey("empleado.id_empleado"))
     id_producto = db.Column(db.Integer, db.ForeignKey("producto.id_producto"))
 
-    cliente = db.relationship("Cliente")
-    empleado = db.relationship("Empleado")
-    producto = db.relationship("Producto")
+  #  cliente = db.relationship("Cliente")
+  # empleado = db.relationship("Empleado")
+  #  producto = db.relationship("Producto")
