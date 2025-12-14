@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 import os
 from datetime import date
 from functools import wraps
+from models import db, Renta
+
 
 # -------------------------------------------------------------
 # Cargar variables de entorno
@@ -12,6 +14,16 @@ load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
+
+
+# -------------------------------------------------------------
+# ORM - SQLAlchemy
+# -------------------------------------------------------------
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+db.init_app(app)
+
 
 # -------------------------------------------------------------
 # Conexión a Supabase
@@ -78,8 +90,7 @@ def home():
 @app.route("/rentas")
 @login_requerido
 def rentas():
-    data = supabase.table("renta").select("*").execute()
-    rentas = data.data if data.data else []
+    rentas = Renta.query.all()
     return render_template("rentas.html", rentas=rentas)
 
 # -------------------------------------------------------------

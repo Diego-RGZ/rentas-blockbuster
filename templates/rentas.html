@@ -18,9 +18,9 @@
     {% for r in rentas %}
     <tr>
         <td>{{ r.id_renta }}</td>
-        <td>{{ r.id_cliente }}</td>
-        <td>{{ r.id_empleado }}</td>
-        <td>{{ r.id_producto }}</td>
+        <td>{{ r.cliente.nombre }}</td>
+        <td>{{ r.empleado.nombre }}</td>
+        <td>{{ r.producto.titulo }}</td>
         <td>{{ r.fecha_renta }}</td>
         <td>{{ r.fecha_devolucion }}</td>
         <td>${{ '%.2f'|format(r.pago_total) }}</td>

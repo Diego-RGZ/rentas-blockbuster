@@ -2,3 +2,5 @@ Flask==2.3.2
 gunicorn==20.1.0
 python-dotenv==1.0.0
 supabase  
+flask-sqlalchemy
+psycopg2-binary
