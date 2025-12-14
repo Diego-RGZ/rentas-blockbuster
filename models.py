@@ -25,14 +25,15 @@ class Renta(db.Model):
     __tablename__ = "renta"
 
     id_renta = db.Column(db.Integer, primary_key=True)
+    id_cliente = db.Column(db.Integer)
+    id_empleado = db.Column(db.Integer)
+    id_producto = db.Column(db.Integer)
+
     fecha_renta = db.Column(db.Date)
     fecha_devolucion = db.Column(db.Date)
-    estado_renta = db.Column(db.String)
-    pago_total = db.Column(db.Numeric)
 
-    id_cliente = db.Column(db.Integer, db.ForeignKey("cliente.id_cliente"))
-    id_empleado = db.Column(db.Integer, db.ForeignKey("empleado.id_empleado"))
-    id_producto = db.Column(db.Integer, db.ForeignKey("producto.id_producto"))
+    estado_renta = db.Column(db.String)
+    pago_total = db.Column(db.Float)
 
   #  cliente = db.relationship("Cliente")
   # empleado = db.relationship("Empleado")
